@@ -17,10 +17,6 @@ const userSchema = new mongoose.Schema({
       type: Number,
     },
   ],
-  Winner: {
-    type: String,
-    default: false,
-  },
 });
 
 const User = mongoose.model("User", userSchema);

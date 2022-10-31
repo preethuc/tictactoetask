@@ -32,7 +32,14 @@ const updateXposition = async (req, res, next) => {
               message: err.message,
             });
           } else {
-            return res.json({
+            console.log(data.Xposition);
+            if (data.Xposition === [0, 4, 8]) {
+              // return res.json({
+              //   message: "X is the winner"
+              // })
+               res.send("X is the winner")
+            }
+            res.json({
               success: "success",
               message: "Added successfully",
               user: data,
