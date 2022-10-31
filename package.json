@@ -1,0 +1,20 @@
+{
+  "name": "tictactask",
+  "version": "1.0.0",
+  "description": "task",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "tictac"
+  ],
+  "author": "preetha",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^6.7.0",
+    "morgan": "^1.10.0",
+    "validator": "^13.7.0"
+  }
+}
