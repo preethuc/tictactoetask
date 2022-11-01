@@ -1,29 +1,16 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-  user1: {
-    type: String,
+const tictactoeSchema = new mongoose.Schema({
+  last_user: {
+     type: String,
+     enum:["user1","user2"]
   },
-  Xposition: [
-    {
-      type: Number,
-    },
-  ],
-  user2: {
-    type: String,
-  },
-  Oposition: [
-    {
-      type: Number,
-    },
-  ],
-});
+  X_O_position: {
+    type: mongoose.Schema.Types.Mixed,
+  }
+  
+})
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model("Game", tictactoeSchema);
 
 module.exports = User;
-
-
-
-
-

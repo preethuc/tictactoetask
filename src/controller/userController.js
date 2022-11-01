@@ -1,130 +1,145 @@
-import User from"./../model/userModel";
+import User from "./../model/userModel";
 
-const createPlayers = async (req, res, next) => {
+exports.game = async (req, res) => {
+  // console.log("hello");
   try {
-    const data = await User.create(req.body);
-    res.status(201).json({
-      status: "success",
-      message: "created!",
-      createdData: data,
-    });
-  } catch (err) {
-    console.log(error.message);
-  }
-};
-const updateXposition = async (req, res, next) => {
-  try {
-    const user_id = req.params.id;
-    const user = await User.findById(user_id).exec();
-    let Xposition = user.Xposition;
-    //   console.log(Xposition);
-    if (user) {
-      Xposition.push(req.body.Xposition);
-      User.findByIdAndUpdate(
-        user_id,
-        { Xposition: Xposition },
-        { new: true },
-        function (err, data) {
-          if (err) {
-            console.log(err);
-            return res.json({
-              success: "success",
-              message: err.message,
-            });
-          } else {
-            // console.log(data.Xposition);
-            // if (data.Xposition === [3,5,7]||data.Xposition === [1,5,9]||data.Xposition === [4,5,6]) {
-            //   // return res.json({
-            //   //   message: "X is the winner"
-            //   // })
-            //    res.send("X is the winner")
-            // }
-            res.json({
-              success: "success",
-              message: "Added successfully",
-              user: data,
-            });
-          }
-        }
-      );
-    }
-  } catch (e) {
-    console.log(e);
-    return res.json({ message: e.message });
-  }
-};
-const updateOposition = async (req, res, next) => {
-  try {
-    const user_id = req.params.id;
-    const user = await User.findById(user_id).exec();
-    let Oposition = user.Oposition;
-    //   console.log(Oposition);
-    if (user) {
-      Oposition.push(req.body.Oposition);
-      User.findByIdAndUpdate(
-        user_id,
-        { Oposition: Oposition },
-        { new: true },
-        function (err, data) {
-          if (err) {
-            console.log(err);
-            return res.json({
-              success: "success",
-              message: err.message,
-            });
-          } else {
-            return res.json({
-              success: "success",
-              message: "Added successfully",
-              user: data,
-            });
-          }
-        }
-      );
-    }
-  } catch (e) {
-    console.log(e);
-    return res.json({ message: e.message });
-  }
-};
+    const doc = await User.find();
+    const position1 = req.body.position1;
+    const position2 = req.body.position2;
 
-const getPlayers = async (req, res, next) => {
-  try {
-    const users = await User.find();
-    res.status(200).json({
-      status: "success",
-      data: users,
-    });
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-const deletePlayer = async (req, res, next) => {
-  try {
-    await User.findByIdAndDelete(req.params.id);
-    res.status(204).json({
-      status: "success",
-  
-    });
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-const getWinner = async (req, res, next) => {
-  try {
-    const data = await User.find()
-    console.log(data[0]);
-    if (data[0].Xposition === [3, 5, 7] || data[0].Xposition === [1, 5, 9] || data[0].Xposition === [4, 5, 6]) {
-      console.log(data.Xposition);
+    // console.log(position1)
+    // console.log(position2)
+
+    if (doc.length === 0) {
+      let static_array = [
+        [null, null, null],
+        [null, null, null],
+        [null, null, null],
+      ];
+      console.log(static_array);
+      static_array[position1][position2] = req.body.value;
+      console.log(position1);
+      console.log(position2);
+      console.log(req.body.value);
+
+      console.log(static_array);
+      const user = await User.create({
+        last_user: req.body.last_user,
+        X_O_position: static_array,
+      });
+      // console.log(user);
       return res.json({
-        message: "X is the winner"
-      })
-      //  res.send("X is the winner")
-    }
-  } catch (err) {
-    console.log(err.message);
-  }
-  }
+        data: user,
+      });
+    } else {
+      const result = doc[0];
+      let changed_array = result.X_O_position;
+      console.log(changed_array)
+      changed_array[position1][position2] = await req.body.value;
 
-          
-module.exports = { createPlayers, updateXposition, updateOposition, getPlayers,deletePlayer ,getWinner};
+      // console.log(static_array);
+      console.log(position1);
+      console.log(position2);
+      console.log(req.body.value)
+      console.log(changed_array)
+      //  update
+      // console.log()
+
+      const updation = await User.updateMany({
+        last_user: req.body.last_user,
+        X_O_position: changed_array,
+      });
+
+      // console.log(updation.acknowledged)
+      if (updation.acknowledged) {
+        const user = await User.find();
+        let win = false;
+        console.log(win)
+        console.log(user[0])
+
+
+        //----------------------chances to be win----------------------
+        //1st-row
+        if (
+          (user[0].X_O_position[0][0] === user[0].X_O_position[0][1]) ===
+          user[0].X_O_position[0][2]
+        ) {
+          win = true;
+          return res.json({ success: "true", Win: user[0].last_user[0] });
+        }
+        //2nd-row
+        if (
+          (user[0].X_O_position[1][0] === user[0].X_O_position[1][1]) ===
+          user[0].X_O_position[1][2]
+        ) {
+          win = true;
+          return res.json({ success: "true", Win: user[0].last_user[0] });
+        }
+        //3rd-row
+        if (
+          (user[0].X_O_position[2][0] === user[0].X_O_position[2][1]) ===
+          user[0].X_O_position[2][2]
+        ) {
+          win = true;
+          return res.json({ success: "true", Win: user[0].last_user[0] });
+        }
+        //1st-column
+        if (
+          (user[0].X_O_position[0][0] === user[0].X_O_position[1][0]) ===
+          user[0].X_O_position[2][0]
+        ) {
+          win = true;
+          return res.json({ success: "true", Win: user[0].last_user[0] });
+        }
+        //2nd-column
+        if (
+          (user[0].X_O_position[0][1] === user[0].X_O_position[1][1]) ===
+          user[0].X_O_position[2][1]
+        ) {
+          win = true;
+          return res.json({ success: "true", Win: user[0].last_user[0] });
+        }
+        //3rd-column
+        if (
+          (user[0].X_O_position[0][2] === user[0].X_O_position[1][2]) ===
+          user[0].X_O_position[2][2]
+        ) {
+          win = true;
+          return res.json({ success: "true", Win: user[0].last_user[0] });
+        }
+        //first-cross
+        if (
+          (user[0].X_O_position[0][0] === user[0].X_O_position[1][1]) ===
+          user[0].X_O_position[2][2]
+        ) {
+          win = true;
+          return res.json({ success: "true", Win: user[0].last_user[0] });
+        }
+        //last-cross
+        if (
+          (user[0].X_O_position[0][2] === user[0].X_O_position[1][1]) ===
+          user[0].X_O_position[2][0]
+        ) {
+          win = true;
+          return res.json({ success: "true", Win: user[0].last_user[0] });
+        }
+
+        //to check every
+        console.log(`-----------after the chances------:  ${win}`)
+        
+        //Match Draw
+        if (!win) {
+          return res.status(200).json({
+            game:user[0].X_O_position ,
+            gameMessage:"Please proceed next move"
+            // success: "true",
+            // Win: "Nobody won Proceed to next move",
+          });
+        }
+      }
+    }
+  } catch (e) {
+    // res.send(e)
+    console.log(e);
+  }
+};

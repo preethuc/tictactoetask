@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "build": "babel src -d lib",
-    "start": "babel src -d lib && node lib/server.js"
+    "start": "babel src -d lib && nodemon lib/server.js"
   },
   "keywords": [
     "tictac"
@@ -21,6 +21,7 @@
     "body-parser": "^1.20.1",
     "express": "^4.18.2",
     "mongoose": "^6.7.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.20"
   }
 }
