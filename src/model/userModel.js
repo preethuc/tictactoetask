@@ -8,7 +8,6 @@ const tictactoeSchema = new mongoose.Schema({
   X_O_position: {
     type: mongoose.Schema.Types.Mixed,
   }
-  
 })
 
 const User = mongoose.model("Game", tictactoeSchema);

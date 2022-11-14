@@ -1,25 +1,20 @@
 import User from "./../model/userModel";
 
 exports.game = async (req, res) => {
-  // console.log("hello");
   try {
     const doc = await User.find();
     const position1 = req.body.position1;
     const position2 = req.body.position2;
 
-    // console.log(position1)
-    // console.log(position2)
-
     if (doc.length === 0) {
       let static_array = [
-        [null, null, null],
-        [null, null, null],
-        [null, null, null],
+        [1, 0, 1],
+        [0, 1, 0],
+        [0, 1, 0],
       ];
       console.log(static_array);
       static_array[position1][position2] = req.body.value;
-      console.log(position1);
-      console.log(position2);
+
       console.log(req.body.value);
 
       console.log(static_array);
@@ -27,21 +22,16 @@ exports.game = async (req, res) => {
         last_user: req.body.last_user,
         X_O_position: static_array,
       });
-      // console.log(user);
+
       return res.json({
         data: user,
       });
     } else {
       const result = doc[0];
       let changed_array = result.X_O_position;
-      console.log(changed_array)
       changed_array[position1][position2] = await req.body.value;
 
-      // console.log(static_array);
-      console.log(position1);
-      console.log(position2);
-      console.log(req.body.value)
-      console.log(changed_array)
+      console.log(changed_array);
       //  update
       // console.log()
 
@@ -50,96 +40,117 @@ exports.game = async (req, res) => {
         X_O_position: changed_array,
       });
 
-      // console.log(updation.acknowledged)
       if (updation.acknowledged) {
         const user = await User.find();
         let win = false;
-        console.log(win)
-        console.log(user[0])
 
-
-        //----------------------chances to be win----------------------
         //1st-row
         if (
-          (user[0].X_O_position[0][0] === user[0].X_O_position[0][1]) ===
-          user[0].X_O_position[0][2]
+          user[0].X_O_position[0][0] === user[0].X_O_position[0][1] &&
+          user[0].X_O_position[0][0] === user[0].X_O_position[0][2]
         ) {
           win = true;
-          return res.json({ success: "true", Win: user[0].last_user[0] });
+          return res.json({
+            success: "true",
+            Win: `Winner of the match : ${user[0].last_user} by 1st-row`,
+          });
         }
         //2nd-row
         if (
-          (user[0].X_O_position[1][0] === user[0].X_O_position[1][1]) ===
-          user[0].X_O_position[1][2]
+          user[0].X_O_position[1][0] === user[0].X_O_position[1][1] &&
+          user[0].X_O_position[1][0] === user[0].X_O_position[1][2]
         ) {
           win = true;
-          return res.json({ success: "true", Win: user[0].last_user[0] });
+          return res.json({
+            success: "true",
+            Win: `Winner of the match : ${user[0].last_user} by 2nd-row`,
+          });
         }
         //3rd-row
         if (
-          (user[0].X_O_position[2][0] === user[0].X_O_position[2][1]) ===
-          user[0].X_O_position[2][2]
+          user[0].X_O_position[2][0] === user[0].X_O_position[2][1] &&
+          user[0].X_O_position[2][0] === user[0].X_O_position[2][2]
         ) {
           win = true;
-          return res.json({ success: "true", Win: user[0].last_user[0] });
+          return res.json({
+            success: "true",
+            Win: `Winner of the match : ${user[0].last_user} by 3rd-row`,
+          });
         }
         //1st-column
         if (
-          (user[0].X_O_position[0][0] === user[0].X_O_position[1][0]) ===
-          user[0].X_O_position[2][0]
+          user[0].X_O_position[0][0] === user[0].X_O_position[1][0] &&
+          user[0].X_O_position[0][0] === user[0].X_O_position[2][0]
         ) {
           win = true;
-          return res.json({ success: "true", Win: user[0].last_user[0] });
+          return res.json({
+            success: "true",
+            Win: `Winner of the match : ${user[0].last_user} by 1st-column`,
+          });
         }
         //2nd-column
         if (
-          (user[0].X_O_position[0][1] === user[0].X_O_position[1][1]) ===
-          user[0].X_O_position[2][1]
+          user[0].X_O_position[0][1] === user[0].X_O_position[1][1] &&
+          user[0].X_O_position[0][1] === user[0].X_O_position[2][1]
         ) {
           win = true;
-          return res.json({ success: "true", Win: user[0].last_user[0] });
+
+          return res.json({
+            success: "true",
+            Win: `Winner of the match : ${user[0].last_user} by 2nd-column`,
+          });
         }
         //3rd-column
         if (
-          (user[0].X_O_position[0][2] === user[0].X_O_position[1][2]) ===
-          user[0].X_O_position[2][2]
+          user[0].X_O_position[0][2] === user[0].X_O_position[1][2] &&
+          user[0].X_O_position[0][2] === user[0].X_O_position[2][2]
         ) {
           win = true;
-          return res.json({ success: "true", Win: user[0].last_user[0] });
+          return res.json({
+            success: "true",
+            Win: `Winner of the match : ${user[0].last_user} by 3rd-column`,
+          });
         }
-        //first-cross
+        //left-cross
         if (
-          (user[0].X_O_position[0][0] === user[0].X_O_position[1][1]) ===
-          user[0].X_O_position[2][2]
+          user[0].X_O_position[0][0] === user[0].X_O_position[1][1] &&
+          user[0].X_O_position[0][0] === user[0].X_O_position[2][2]
         ) {
           win = true;
-          return res.json({ success: "true", Win: user[0].last_user[0] });
+          return res.json({
+            success: "true",
+            Win: `Winner of the match : ${user[0].last_user} by left-cross `,
+          });
         }
-        //last-cross
+        //right-cross
         if (
-          (user[0].X_O_position[0][2] === user[0].X_O_position[1][1]) ===
-          user[0].X_O_position[2][0]
+          user[0].X_O_position[0][2] === user[0].X_O_position[1][1] &&
+          user[0].X_O_position[0][2] === user[0].X_O_position[2][0]
         ) {
           win = true;
-          return res.json({ success: "true", Win: user[0].last_user[0] });
+          return res.json({
+            success: "true",
+            Win: ` Winner of the match : ${user[0].last_user} by right-cross`,
+          });
         }
-
-        //to check every
-        console.log(`-----------after the chances------:  ${win}`)
-        
+        console.log(win);
         //Match Draw
         if (!win) {
           return res.status(200).json({
-            game:user[0].X_O_position ,
-            gameMessage:"Please proceed next move"
-            // success: "true",
-            // Win: "Nobody won Proceed to next move",
+            game: user[0].X_O_position,
+            gameMessage: "Please proceed to next move",
           });
+          
         }
+
+       
+      
       }
+     
     }
-  } catch (e) {
-    // res.send(e)
-    console.log(e);
+
+  } catch (error) {
+    res.send(error);
+    console.log(error);
   }
 };
